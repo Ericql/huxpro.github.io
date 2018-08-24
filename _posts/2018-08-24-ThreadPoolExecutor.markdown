@@ -7,7 +7,7 @@ author:       "Eric"
 header-img:   ""
 header-mask:  0.3
 catalog:      true
-multilingual: true
+multilingual: false
 tags:
     - 后端开发
     - Java
