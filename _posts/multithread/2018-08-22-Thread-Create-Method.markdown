@@ -1,18 +1,17 @@
 ---
-layout:       post  
-title:        "Java多线程"  
-subtitle:     "Thread Create Method"  
-date:         2018-08-22 12:00:00  
-author:       "Eric"  
-header-img:   ""  
-header-mask:  0.3  
-catalog:      true  
-multilingual: false  
-tags:  
-&#8194;&#8194;- 后端开发  
-&#8194;&#8194;- Java  
-&#8194;&#8194;- 多线程
-  
+layout:       post
+title:        "Java线程创建方式"
+subtitle:     "Thread Create Method"
+date:         2018-08-22 12:00:00
+author:       "Eric"
+header-img:   ""
+header-mask:  0.3
+catalog:      true
+multilingual: false
+tags:
+    - 后端开发
+    - Java
+    - 多线程
 ---
 # 实现多线程的方式 #
 ## 1.继承Thread类 ##
