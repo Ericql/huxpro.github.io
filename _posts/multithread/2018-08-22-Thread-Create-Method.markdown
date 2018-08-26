@@ -128,7 +128,6 @@ RunnableFuture<V> extends Runnable, Future
         Thread.sleep(3000);
         return 1;
     }
-
     public static void main(String[] args) throws Exception {
         Thread4 thread4 = new Thread4();
         FutureTask<Integer> task = new FutureTask<>(thread4);
