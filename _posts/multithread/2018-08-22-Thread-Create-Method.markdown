@@ -141,6 +141,7 @@ RunnableFuture<V> extends Runnable, Future
         System.out.println("线程执行的结果为:"+result);
     }
 }</pre>
+
 ## 5.定时器 ##
 除了JDK给我们提供的Timer类外,还有第三方的定时任务的框架Quartz
 利用Timer的schedule去定时执行任务,TimerTask也是继承Runnable接口实现run方法的线程任务
