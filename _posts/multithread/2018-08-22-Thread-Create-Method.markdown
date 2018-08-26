@@ -121,7 +121,8 @@ FutureTask implements RunnableFuture
 RunnableFuture<V> extends Runnable, Future
 即FutureTask是对线程任务的封装,可将thread4封装成一个FutureTask
 将Task任务放到Thread中去执行
-<pre name="code" class="java">public class Thread4 implements Callable<Integer> {
+```
+public class Thread4 implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         System.out.println("正在进行紧张的计算...");
@@ -139,8 +140,8 @@ RunnableFuture<V> extends Runnable, Future
         Integer result = task.get();
         System.out.println("线程执行的结果为:"+result);
     }
-}</pre>
-
+}
+```
 ## 5.定时器 ##
 除了JDK给我们提供的Timer类外,还有第三方的定时任务的框架Quartz
 利用Timer的schedule去定时执行任务,TimerTask也是继承Runnable接口实现run方法的线程任务
