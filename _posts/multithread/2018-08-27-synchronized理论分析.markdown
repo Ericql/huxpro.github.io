@@ -10,7 +10,7 @@ catalog:      true
 multilingual: false
 tags:
     - Java
-	- 多线程
+    - 多线程
 ---
 # synchronized原理 #
 ## 理论上保证线程安全原理
