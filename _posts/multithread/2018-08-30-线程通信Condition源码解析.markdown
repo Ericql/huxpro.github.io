@@ -10,7 +10,7 @@ catalog:      true
 multilingual: false
 tags:
     - Java
-	- 多线程
+    - 多线程
 ---
 # 线程通信Condition源码分析
 ## Object类提供的线程通信--wait、notify
