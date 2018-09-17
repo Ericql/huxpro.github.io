@@ -14,7 +14,7 @@ tags:
     - ThreadPoolExecutor
 ---
 
-#线程池概述 #
+# 线程池概述 #
 
  - 什么是线程池
     就是将多个线程放在一个池子里面(所谓池化技术),然后需要线程的时候不是创建一个线程,而是从线程池里面获取一个可用的线程,然后执行我们的任务.
@@ -22,7 +22,8 @@ tags:
     - 降低资源消耗,通过重复利用已创建的线程降低线程创建和消耗
     - 提供响应速度,当任务到达时,任务可以不需要等到线程创建就立即执行
     - 提高线程的可管理性,线程是稀缺资源,如果无限制的创建,不仅会消耗系统资源,还会降低系统的稳定性,使用线程池可以进行统一的分配、调优和监控.
-#创建一个线程池并提交线程任务 #
+    
+# 创建一个线程池并提交线程任务 #
 Java线程池最核心的类是ThreadPoolExecutor,查看ThreadPoolExecutor类关系继承图如下:
 ![ThreadPoolExecutor类关系图](/img/in-post/thread-pool-executor/结构.png)
 
@@ -32,11 +33,11 @@ Java线程池最核心的类是ThreadPoolExecutor,查看ThreadPoolExecutor类关
 所以ThreadPoolExecutor可以使用上述两种方式提交任务
 ## ThreadPoolExecutor源码解析 ##
 ### 类的结构 ###
-![ThreadPoolExecutor类结构图][2]
+![ThreadPoolExecutor类结构图](/img/in-post/thread-pool-executor/ThreadPoolExecutor类结构图.png)
 
 
 ThreadPoolExecutor的核心内部类为Worker,其对资源进行了复用,减少了创建线程的开销,而其他的AbortPolicy等则是RejectedExecutionHandler接口的各种拒绝策略类
-![ThreadPoolExecutor类结构图1][3]
+![ThreadPoolExecutor类结构图1](/img/in-post/thread-pool-executor/ThreadPoolExecutor类结构图1.png)
   [1]: /img/bVbfCZs
   [2]: /img/bVbfEXu
   [3]: /img/bVbfE5E
@@ -312,17 +313,17 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
     /* 执行finalizer时要使用的上下文 */
     private final AccessControlContext acc;
 ```
-着重讲解下线程池的运行状态：
-1.RUNNING:接受新任务并且处理已经进入阻塞队列的任务
-2.SHUTDOWN:不接受新任务,但是处理已经进入阻塞队列的任务
-3.STOP:不接受新任务,不处理已经进入阻塞队列的任务并且中断正在运行任务
-4.TIDYING:所有任务都已经终止,workerCount为0,线程转化为TIDYING状态并且调用terminated钩子函数
-5.terminated钩子函数已经运行完成
-    private static final int RUNNING    = -1 << COUNT_BITS;
-    private static final int SHUTDOWN   =  0 << COUNT_BITS;
-    private static final int STOP       =  1 << COUNT_BITS;
-    private static final int TIDYING    =  2 << COUNT_BITS;
-    private static final int TERMINATED =  3 << COUNT_BITS;
+着重讲解下线程池的运行状态:  
+ 1.RUNNING:接受新任务并且处理已经进入阻塞队列的任务  
+ 2.SHUTDOWN:不接受新任务,但是处理已经进入阻塞队列的任务  
+ 3.STOP:不接受新任务,不处理已经进入阻塞队列的任务并且中断正在运行任务  
+ 4.TIDYING:所有任务都已经终止,workerCount为0,线程转化为TIDYING状态并且调用terminated钩子函数  
+ 5.terminated钩子函数已经运行完成
+    private static final int RUNNING    = -1 << COUNT_BITS;  
+    private static final int SHUTDOWN   =  0 << COUNT_BITS;  
+    private static final int STOP       =  1 << COUNT_BITS;  
+    private static final int TIDYING    =  2 << COUNT_BITS;  
+    private static final int TERMINATED =  3 << COUNT_BITS;  
 runState单调增加，不一定要命中每个状态：
     RUNNING -> SHUTDOWN：调用SHUTDOWN()时,可能隐式在最后调用finalize()
     (RUNNING or SHUTDOWN) -> STOP：调用shutdownNow()
@@ -330,7 +331,7 @@ runState单调增加，不一定要命中每个状态：
     STOP -> TIDYING：当线程池为空时
     TIDYING -> TERMINATED：当terminated()钩子方法已经完成
 ### ThreadPoolExecutor类的构造函数 ###
-ThreadPoolExecutor类总共有四个构造函数,但是前面三个都是特例最终调的都是最后一个,咱先解析每个构造函数再统一分析好它每一个参数的意思
+ThreadPoolExecutor类总共有四个构造函数,但是前面三个都是特例最终调的都是最后一个,咱先解析每个构造函数再统一分析好它每一个参数的意思  
 1.ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue<Runnable>)
 
 ```
@@ -342,7 +343,7 @@ public ThreadPoolExecutor(int corePoolSize,
 	this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, Executors.defaultThreadFactory(), defaultHandler);
 }
 ```
-说明:该构造函数默认的线程工厂及拒绝执行策略去创建ThreadPoolExecutor
+说明:该构造函数默认的线程工厂及拒绝执行策略去创建ThreadPoolExecutor  
 2.ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue<Runnable>, ThreadFactory)
 
 ```
@@ -355,7 +356,7 @@ public ThreadPoolExecutor(int corePoolSize,
 	this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, defaultHandler);
 }
 ```
-说明:该构造函数只给出默认的拒绝执行策略
+说明:该构造函数只给出默认的拒绝执行策略  
 3.ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue<Runnable>, RejectedExecutionHandler)
 
 ```
@@ -368,7 +369,7 @@ public ThreadPoolExecutor(int corePoolSize,
 	this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, Executors.defaultThreadFactory(), handler);
 }
 ```
-说明:该构造函数只给出默认的线程工厂
+说明:该构造函数只给出默认的线程工厂  
 4.ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue<Runnable>, ThreadFactory, RejectedExecutionHandler)
 
 ```
@@ -554,7 +555,7 @@ private boolean addWorker(Runnable firstTask, boolean core) {
 }
 ```
 #### 任务执行过程 ####
-1、runworker方法
+1.runworker方法  
 runWorker函数中会实际执行给定任务(即调用用户重写的run方法),并且当给定任务完成后,会继续从阻塞队列中取任务,直到阻塞队列为空(即任务全部完成).在执行给定任务时会调用钩子函数利用钩子函数可以完成用户自定义的一些逻辑,在runWorker中会调用getTask函数和processWorkerExit钩子函数
 ```
 final void runWorker(Worker w) {
