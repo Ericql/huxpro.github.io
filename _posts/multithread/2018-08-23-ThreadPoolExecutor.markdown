@@ -316,17 +316,17 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
  3.STOP:不接受新任务,不处理已经进入阻塞队列的任务并且中断正在运行任务  
  4.TIDYING:所有任务都已经终止,workerCount为0,线程转化为TIDYING状态并且调用terminated钩子函数  
  5.terminated钩子函数已经运行完成  
-&emsp;&emsp;> private static final int RUNNING    = -1 << COUNT_BITS;  
-&emsp;&emsp;> private static final int SHUTDOWN   =  0 << COUNT_BITS;  
-&emsp;&emsp;> private static final int STOP       =  1 << COUNT_BITS;  
-&emsp;&emsp;> private static final int TIDYING    =  2 << COUNT_BITS;  
-&emsp;&emsp;> private static final int TERMINATED =  3 << COUNT_BITS;  
+&emsp;&emsp;private static final int RUNNING    = -1 << COUNT_BITS;  
+&emsp;&emsp;private static final int SHUTDOWN   =  0 << COUNT_BITS;  
+&emsp;&emsp;private static final int STOP       =  1 << COUNT_BITS;  
+&emsp;&emsp;private static final int TIDYING    =  2 << COUNT_BITS;  
+&emsp;&emsp;private static final int TERMINATED =  3 << COUNT_BITS;  
 runState单调增加，不一定要命中每个状态:  
-&emsp;&emsp;> RUNNING -> SHUTDOWN：调用SHUTDOWN()时,可能隐式在最后调用finalize()  
-&emsp;&emsp;> (RUNNING or SHUTDOWN) -> STOP：调用shutdownNow()  
-&emsp;&emsp;> SHUTDOWN -> TIDYING：当队列和线程池都为空时  
-&emsp;&emsp;> STOP -> TIDYING：当线程池为空时  
-&emsp;&emsp;> TIDYING -> TERMINATED：当terminated()钩子方法已经完成  
+&emsp;&emsp;RUNNING -> SHUTDOWN：调用SHUTDOWN()时,可能隐式在最后调用finalize()  
+&emsp;&emsp;(RUNNING or SHUTDOWN) -> STOP：调用shutdownNow()  
+&emsp;&emsp;SHUTDOWN -> TIDYING：当队列和线程池都为空时  
+&emsp;&emsp;STOP -> TIDYING：当线程池为空时  
+&emsp;&emsp;TIDYING -> TERMINATED：当terminated()钩子方法已经完成  
 ### ThreadPoolExecutor类的构造函数 ###
 ThreadPoolExecutor类总共有四个构造函数,但是前面三个都是特例最终调的都是最后一个,咱先解析每个构造函数再统一分析好它每一个参数的意思  
 1.ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue<Runnable>)
@@ -397,19 +397,22 @@ public ThreadPoolExecutor(int corePoolSize,
  - maximumPoolSize:线程池最大线程数,表示线程池中最多创建多少个线程
  - keepAliveTime:表示线程没有任务执行时最多保持多久时间会终止.默认情况下只有当线程池中的线程数大于corePoolSize时,KeepAliveTime才会起作用,直到线程池中的线程数不大于corePoolSize,即当线程池中的线程数大于CorePoolSize时,如果一个线程空闲的时间达到keepAliveTime则会终止,直到线程池中的线程数不超过corePoolSize.但是如果调用了allowCoreThreadTimeOut(boolean)方法,在线程池中的线程数不大于corePoolSize时,keepAliveTime参数也会起作用,直到线程池中的线程数为0
  - unit: 参数keepAliveTime的时间单位,有7种取值,默认为纳秒
-        TimeUnit.DAYS;                //天
-        TimeUnit.HOURS;              //小时
-        TimeUnit.MINUTES;           //分钟
-        TimeUnit.SECONDS;           //秒
-        TimeUnit.MILLISECONDS;      //毫秒
-        TimeUnit.MICROSECONDS;      //微妙
-        TimeUnit.NANOSECONDS;       //纳秒
+&emsp;&emsp;TimeUnit.DAYS;                //天  
+&emsp;&emsp;TimeUnit.HOURS;              //小时  
+&emsp;&emsp;TimeUnit.MINUTES;           //分钟  
+&emsp;&emsp;TimeUnit.SECONDS;           //秒  
+&emsp;&emsp;TimeUnit.MILLISECONDS;      //毫秒  
+&emsp;&emsp;TimeUnit.MICROSECONDS;      //微妙  
+&emsp;&emsp;TimeUnit.NANOSECONDS;       //纳秒
  - workQueue: 一个阻塞队列,用来存储等待执行的任务,一般有以下几种选择:ArrayBlockingQueue、LinkedBlockingQueue、SynchronousQueue
  - threadFactory:线程工厂,主要用来创建线程
  - handler:拒绝执行策略
-### ThreadPoolExecutor类的核心函数分析 ###
+ 
+### ThreadPoolExecutor类的核心函数分析 ###  
+
 #### 任务提交过程 ####
-1.execute方法
+
+1.execute方法  
 ```
 public void execute(Runnable command) {
 	if (command == null)
