@@ -4,7 +4,7 @@ title:        "Java线程创建方式"
 subtitle:     "Thread Create Method"
 date:         2018-08-22 12:00:00
 author:       "Eric"
-header-img:   ""
+header-img:   "img/in-post/thread-create-method/thread-state.jpg"
 header-mask:  0.3
 catalog:      true
 multilingual: false
