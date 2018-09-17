@@ -38,9 +38,6 @@ Java线程池最核心的类是ThreadPoolExecutor,查看ThreadPoolExecutor类关
 
 ThreadPoolExecutor的核心内部类为Worker,其对资源进行了复用,减少了创建线程的开销,而其他的AbortPolicy等则是RejectedExecutionHandler接口的各种拒绝策略类
 ![ThreadPoolExecutor类结构图1](/img/in-post/thread-pool-executor/ThreadPoolExecutor类结构图1.png)
-  [1]: /img/bVbfCZs
-  [2]: /img/bVbfEXu
-  [3]: /img/bVbfE5E
 当使用线程池并且使用有界队列的时候,如果队列满了,任务添加到线程池就会有问题,针对这个问题Java线程池提供了以下拒绝策略:
 
  1. AbortPolicy:使用该策略时,如果线程池队列满了,丢掉这个任务并且抛出RejectedExecutionException异常
@@ -81,10 +78,10 @@ private final class Worker
 	// 每个线程任务计数器,记录已完成任务数量
 	volatile long completedTasks;
 ```
-说明:
-    1.Thread类型的thread属性用来封装worker,对应形成一个线程
-    2.Runnable类型的firstTask其表示该worker包含的runnable对象,即用户自定义的Runnable
-    3.volatile修饰的long类型的completedTasks表示已完成的任务数量
+说明:  
+    1.Thread类型的thread属性用来封装worker,对应形成一个线程  
+    2.Runnable类型的firstTask其表示该worker包含的runnable对象,即用户自定义的Runnable  
+    3.volatile修饰的long类型的completedTasks表示已完成的任务数量  
 #### 类构造函数 ####
 
 ```
@@ -318,18 +315,18 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
  2.SHUTDOWN:不接受新任务,但是处理已经进入阻塞队列的任务  
  3.STOP:不接受新任务,不处理已经进入阻塞队列的任务并且中断正在运行任务  
  4.TIDYING:所有任务都已经终止,workerCount为0,线程转化为TIDYING状态并且调用terminated钩子函数  
- 5.terminated钩子函数已经运行完成
+ 5.terminated钩子函数已经运行完成  
     private static final int RUNNING    = -1 << COUNT_BITS;  
     private static final int SHUTDOWN   =  0 << COUNT_BITS;  
     private static final int STOP       =  1 << COUNT_BITS;  
     private static final int TIDYING    =  2 << COUNT_BITS;  
     private static final int TERMINATED =  3 << COUNT_BITS;  
-runState单调增加，不一定要命中每个状态：
-    RUNNING -> SHUTDOWN：调用SHUTDOWN()时,可能隐式在最后调用finalize()
-    (RUNNING or SHUTDOWN) -> STOP：调用shutdownNow()
-    SHUTDOWN -> TIDYING：当队列和线程池都为空时
-    STOP -> TIDYING：当线程池为空时
-    TIDYING -> TERMINATED：当terminated()钩子方法已经完成
+runState单调增加，不一定要命中每个状态:  
+    RUNNING -> SHUTDOWN：调用SHUTDOWN()时,可能隐式在最后调用finalize()  
+    (RUNNING or SHUTDOWN) -> STOP：调用shutdownNow()  
+    SHUTDOWN -> TIDYING：当队列和线程池都为空时  
+    STOP -> TIDYING：当线程池为空时  
+    TIDYING -> TERMINATED：当terminated()钩子方法已经完成  
 ### ThreadPoolExecutor类的构造函数 ###
 ThreadPoolExecutor类总共有四个构造函数,但是前面三个都是特例最终调的都是最后一个,咱先解析每个构造函数再统一分析好它每一个参数的意思  
 1.ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue<Runnable>)
@@ -456,7 +453,8 @@ public void execute(Runnable command) {
 		reject(command);
 }
 ```
-说明:当客户端调用submit时,之后会间接调用execute函数,其在将来某个时间执行给定任务,execute并不会直接运行给定任务,它主要调用addWorker方法
+
+说明:当客户端调用submit时,之后会间接调用execute函数,其在将来某个时间执行给定任务,execute并不会直接运行给定任务,它主要调用addWorker方法  
 2.addWorker方法
 addWorker主要是完成以下任务：
  - 原子性增加workerCount
