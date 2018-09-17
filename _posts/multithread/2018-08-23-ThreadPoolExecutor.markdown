@@ -44,7 +44,7 @@ ThreadPoolExecutor的核心内部类为Worker,其对资源进行了复用,减少
  2. DiscardPolicy: 如果线程池队列满了,会直接丢掉这个任务并且不会有任何异常
  3. DiscardOldestPolicy: 如果线程池队列满了,会将最老的(即最早进入队列的)任务删除掉并腾出队列空间,再尝试将任务加入队列
  4. CallerRunsPolicy:如果任务添加到线程池失败,那么主线程会自己去执行该任务,不会去等待线程池的任务去执行
- 5. 自定义:如果以上策略不符合业务场景,那么可以自己定义拒绝策略,只要实现RejectedExecutionHandler接口,并且实现rejectedExecution方法就可以了
+ 5. 自定义:如果以上策略不符合业务场景,那么可以自己定义拒绝策略,只要实现RejectedExecutionHandler接口,并且实现rejectedExecution方法就可以了  
 由于核心内部类是worker,而且worker简易,先解析worker:
 
 ### Worker类源码解析 ###
@@ -159,15 +159,15 @@ void interruptIfStarted() {
 
 ```
 public class ThreadPoolExecutor extends AbstractExecutorService {
-	// 线程池的控制状态(用来表示线程池的运行状态--高3位和运行的worker数量--低29位) 
+    // 线程池的控制状态(用来表示线程池的运行状态--高3位和运行的worker数量--低29位) 
     private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
-	// 29位的偏移量
+    // 29位的偏移量
     private static final int COUNT_BITS = Integer.SIZE - 3;
-	// 最大容量 2^29-1
+    // 最大容量 2^29-1
     private static final int CAPACITY   = (1 << COUNT_BITS) - 1;
 
     // runState is stored in the high-order bits
-	// 线程运行状态,总共5种状态,高3位表示
+    // 线程运行状态,总共5种状态,高3位表示
     private static final int RUNNING    = -1 << COUNT_BITS;
     private static final int SHUTDOWN   =  0 << COUNT_BITS;
     private static final int STOP       =  1 << COUNT_BITS;
@@ -175,26 +175,26 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
     private static final int TERMINATED =  3 << COUNT_BITS;
 
     // 对ctl进行装箱和拆箱动作
-	// 拆分运行状态
+    // 拆分运行状态
     private static int runStateOf(int c)     { return c & ~CAPACITY; }
-	// 拆分线程数量
+    // 拆分线程数量
     private static int workerCountOf(int c)  { return c & CAPACITY; }
-	// 运行状态和线程数量组合
+    // 运行状态和线程数量组合
     private static int ctlOf(int rs, int wc) { return rs | wc; }
 
     /*
      * Bit field accessors that don't require unpacking ctl.
      * These depend on the bit layout and on workerCount being never negative.
      */
-	// 判断当前的运行状态是否在s这个标准状态之下
+    // 判断当前的运行状态是否在s这个标准状态之下
     private static boolean runStateLessThan(int c, int s) {
         return c < s;
     }
-	// 判断当前的运行状态是否在s这个标准状态之上
+    // 判断当前的运行状态是否在s这个标准状态之上
     private static boolean runStateAtLeast(int c, int s) {
         return c >= s;
     }
-	// 判断是否为运行状态
+    // 判断是否为运行状态
     private static boolean isRunning(int c) {
         return c < SHUTDOWN;
     }
@@ -316,17 +316,17 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
  3.STOP:不接受新任务,不处理已经进入阻塞队列的任务并且中断正在运行任务  
  4.TIDYING:所有任务都已经终止,workerCount为0,线程转化为TIDYING状态并且调用terminated钩子函数  
  5.terminated钩子函数已经运行完成  
-    private static final int RUNNING    = -1 << COUNT_BITS;  
-    private static final int SHUTDOWN   =  0 << COUNT_BITS;  
-    private static final int STOP       =  1 << COUNT_BITS;  
-    private static final int TIDYING    =  2 << COUNT_BITS;  
-    private static final int TERMINATED =  3 << COUNT_BITS;  
+&emsp;&emsp;> private static final int RUNNING    = -1 << COUNT_BITS;  
+&emsp;&emsp;> private static final int SHUTDOWN   =  0 << COUNT_BITS;  
+&emsp;&emsp;> private static final int STOP       =  1 << COUNT_BITS;  
+&emsp;&emsp;> private static final int TIDYING    =  2 << COUNT_BITS;  
+&emsp;&emsp;> private static final int TERMINATED =  3 << COUNT_BITS;  
 runState单调增加，不一定要命中每个状态:  
-    RUNNING -> SHUTDOWN：调用SHUTDOWN()时,可能隐式在最后调用finalize()  
-    (RUNNING or SHUTDOWN) -> STOP：调用shutdownNow()  
-    SHUTDOWN -> TIDYING：当队列和线程池都为空时  
-    STOP -> TIDYING：当线程池为空时  
-    TIDYING -> TERMINATED：当terminated()钩子方法已经完成  
+&emsp;&emsp;> RUNNING -> SHUTDOWN：调用SHUTDOWN()时,可能隐式在最后调用finalize()  
+&emsp;&emsp;> (RUNNING or SHUTDOWN) -> STOP：调用shutdownNow()  
+&emsp;&emsp;> SHUTDOWN -> TIDYING：当队列和线程池都为空时  
+&emsp;&emsp;> STOP -> TIDYING：当线程池为空时  
+&emsp;&emsp;> TIDYING -> TERMINATED：当terminated()钩子方法已经完成  
 ### ThreadPoolExecutor类的构造函数 ###
 ThreadPoolExecutor类总共有四个构造函数,但是前面三个都是特例最终调的都是最后一个,咱先解析每个构造函数再统一分析好它每一个参数的意思  
 1.ThreadPoolExecutor(int, int, long, TimeUnit, BlockingQueue<Runnable>)
