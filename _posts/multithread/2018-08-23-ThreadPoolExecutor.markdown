@@ -396,7 +396,7 @@ public ThreadPoolExecutor(int corePoolSize,
  - corePoolSize:线程池大小,在创建线程池后,默认情况下线程池中并没有任何线程,而是等到有任务到来后才创建线程去执行任务,除非调用了prestartAllCoreThreads()或者prestartCoreThread()方法,就会预创建线程,即在没有任务到来之前就创建corePoolSize个线程或一个线程.默认情况下,在创建了线程池后,线程池中的线程数为0,当有任务来之后,就会创建一个线程去执行任务,当线程池中的线程数目达到corePoolSize后,就会把到达的任务放到缓存队列当中
  - maximumPoolSize:线程池最大线程数,表示线程池中最多创建多少个线程
  - keepAliveTime:表示线程没有任务执行时最多保持多久时间会终止.默认情况下只有当线程池中的线程数大于corePoolSize时,KeepAliveTime才会起作用,直到线程池中的线程数不大于corePoolSize,即当线程池中的线程数大于CorePoolSize时,如果一个线程空闲的时间达到keepAliveTime则会终止,直到线程池中的线程数不超过corePoolSize.但是如果调用了allowCoreThreadTimeOut(boolean)方法,在线程池中的线程数不大于corePoolSize时,keepAliveTime参数也会起作用,直到线程池中的线程数为0
- - unit: 参数keepAliveTime的时间单位,有7种取值,默认为纳秒
+ - unit: 参数keepAliveTime的时间单位,有7种取值,默认为纳秒  
 &emsp;&emsp;TimeUnit.DAYS;                //天  
 &emsp;&emsp;TimeUnit.HOURS;              //小时  
 &emsp;&emsp;TimeUnit.MINUTES;           //分钟  
@@ -458,7 +458,7 @@ public void execute(Runnable command) {
 ```
 
 说明:当客户端调用submit时,之后会间接调用execute函数,其在将来某个时间执行给定任务,execute并不会直接运行给定任务,它主要调用addWorker方法  
-2.addWorker方法
+2.addWorker方法  
 addWorker主要是完成以下任务：
  - 原子性增加workerCount
  - 将用户给定的任务封装成一个worker,并将此worker添加进workers集合
@@ -613,7 +613,7 @@ final void runWorker(Worker w) {
     }
 }
 ```
-2.getTask方法
+2.getTask方法  
 getTask函数用于从workerQueue阻塞队列中获取Runnable对象,由于是阻塞队列,所以支持有限时间等待poll和无限时间等待take.在该函数中还会相应shutdown和shutDownNow函数的操作,若检测到线程池处于SHUTDOWN或STOP状态,则会返回null,而不再返回阻塞队列中的Runnable对象
 
 ```
@@ -663,10 +663,10 @@ private Runnable getTask() {
     }
 }
 ```
-3.processWorkerExit方法
-processWorkerExit函数是在worker退出时调用到的钩子函数,而引起worker退出的主要因素如下:
-1.阻塞队列已经为空,即没有任务可以运行了
-2.调用了shutDown或shutDownNow函数
+3.processWorkerExit方法  
+processWorkerExit函数是在worker退出时调用到的钩子函数,而引起worker退出的主要因素如下:  
+1.阻塞队列已经为空,即没有任务可以运行了  
+2.调用了shutDown或shutDownNow函数  
 此函数会根据是否中断了空闲线程来确定是否减少workerCount的值,并且将worker从workers集合中移除并且会尝试终止线程池
 
 ```
@@ -704,7 +704,7 @@ private void processWorkerExit(Worker w, boolean completedAbruptly) {
 }
 ```
 #### 任务关闭过程 ####
-1.shutdown方法
+1.shutdown方法  
 shutdown会按过去执行已提交任务的顺序发起一个有序的关闭,但是不接受新任务.首先检查是否具有shutdown的权限,然后设置线程池的控制为SHUTDOWN,之后中断空闲的worker,最后尝试终止线程池.
 
 ```
