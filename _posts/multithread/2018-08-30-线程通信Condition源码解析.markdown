@@ -275,13 +275,13 @@ final ConditionObject newCondition() {
     return new ConditionObject();
 }
 ```
-&emsp;&emsp;由上可知:Condition是通过sync同步类去创建的,而sync内部是直接new了ConditionObject();所以分析Condition源码就是分析ConditionObject,定位发现ConditionObject是AQS的内部类
-&emsp;&emsp;我们在使用的时候主要是使用ConditionObject的await和signal方法
-&emsp;&emsp;ConditionObject的等待队列是一个FIFO队列,队列的每个节点都是等待在Condition对象上线程的引用;在调用await方法,线程释放锁,将其构造成Node节点放入条件等待队列.
-Condition队列的结构如下:
-Condition结构图
-> AQS实质上拥有一个同步队列和多个等待队列，具体对应关系如下图所示：
-AQS结构图
+&emsp;&emsp;由上可知:Condition是通过sync同步类去创建的,而sync内部是直接new了ConditionObject();所以分析Condition源码就是分析ConditionObject,定位发现ConditionObject是AQS的内部类  
+&emsp;&emsp;我们在使用的时候主要是使用ConditionObject的await和signal方法  
+&emsp;&emsp;ConditionObject的等待队列是一个FIFO队列,队列的每个节点都是等待在Condition对象上线程的引用;在调用await方法,线程释放锁,将其构造成Node节点放入条件等待队列.  
+Condition队列的结构如下:  
+![Condition结构图](img/in-post/condition/Condition结构.jpg)
+> AQS实质上拥有一个同步队列和多个等待队列，具体对应关系如下图所示:  
+![AQS结构图](img/in-post/condition/AQS同步队列与等待队列示意图.jpg)
 
 ### await方法解析
 ```
@@ -313,7 +313,7 @@ public final void await() throws InterruptedException {
 }
 ```
 await具体流程如下:
-await流程图
+![await流程图](img/in-post/condition/await流程.png)
 #### 1.入队操作
 &emsp;&emsp;Condition的入队操作表示将节点添加进"条件等待队列",通过AQS的ConditionObject的addConditionWaiter方法来完成
 ```
