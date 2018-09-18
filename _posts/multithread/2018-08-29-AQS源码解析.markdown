@@ -341,7 +341,7 @@ final boolean acquireQueued(final Node node, int arg) {
     }  
 }
 ```
-1.shouldParkAfterFailedAcquire
+1.shouldParkAfterFailedAcquire  
 &emsp;&emsp;此方法检测和更新获取失败节点的状态,避免存在节点是取消或被中断了,确保当前节点是真的可以park了
 ```
 /**
@@ -374,7 +374,7 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
 	return false;
 }
 ```
-2.parkAndCheckInterrupt()
+2.parkAndCheckInterrupt()  
 &emsp;&emsp;真正让线程进入waiting状态,进行park的操作;并进行检查中断的操作
 ```
 private final boolean parkAndCheckInterrupt() {
@@ -391,7 +391,7 @@ parkAndCheckInterrupt()的作用是阻塞当前线程,并且返回"线程被唤�
 第2种情况：中断唤醒.其它线程通过interrupt()中断当前线程
 
 补充: LockSupport()中的park(),unpark()的作用 和 Object中的wait(),notify()作用类似,是阻塞/唤醒;它们的用法不同,park(),unpark()是轻量级的,而wait(),notify()是必须先通过Synchronized获取同步锁  
-3.acquireQueue的流程图
+3.acquireQueue的流程图  
 ![acquireQueue的流程图](/img/in-post/AQS/AcquireQueue.jpg)
 ##### acquire流程总结
 1.调用tryAcquire()尝试去获取资源,成功则返回  
@@ -491,7 +491,7 @@ protected int tryAcquireShared(int arg) {
 该方法已经明确了返回值:   
 - 失败则返回负值  
 - 在共享模式下获取成功,但是没有后续资源可以获取则返回0  
-- 在共享模式下获取成功,并且后续获取资源也成功则返回正值,这种情况下,后续等待线程必须检查可用性  
+- 在共享模式下获取成功,并且后续获取资源也成功则返回正值,这种情况下,后续等待线程必须检查可用性    
 ##### 2.doAcquireShared
 ```
 /**
