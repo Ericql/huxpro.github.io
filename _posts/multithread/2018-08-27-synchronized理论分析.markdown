@@ -19,7 +19,7 @@ tags:
 修饰普通方法:内置锁就是当前类的实例  
 修饰静态方法:内置锁是当前Class字节码对象Sequence.class  
 修饰代码块:指定的锁对象  
-```
+```  
 private static int value;
 
 /**
