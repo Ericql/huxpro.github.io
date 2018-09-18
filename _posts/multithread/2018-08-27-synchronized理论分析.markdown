@@ -19,6 +19,7 @@ tags:
 修饰普通方法:内置锁就是当前类的实例  
 修饰静态方法:内置锁是当前Class字节码对象Sequence.class  
 修饰代码块:指定的锁对象  
+
 ```  
 private static int value;
 
@@ -48,6 +49,7 @@ public int xx() {
     }
 }
 ```
+
 ## JVM上保证线程安全原理
 基于进入与退出Mintor对象来实现的,JVM的指令分别是mintorenter和mintorexit  
 任何对象都可以作为锁,那么锁信息又存在对象的什么地方?  
