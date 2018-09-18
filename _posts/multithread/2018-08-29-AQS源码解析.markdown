@@ -14,14 +14,14 @@ tags:
 ---
 # AbstractQueuedSynchronizer源码分析
 ## 简介
-&emsp;&emsp;AbstractQueuedSynchronizer(下文均以AQS代替)可以用于构建锁或者其他相关同步装置的基础框架.JDK1.5之前一般使用synchronized关键字来实现线程对共享变量的互斥访问,而JDK1.5之后开发了AQS组件,使用原生java代码实现了synchronized语义.
-&emsp;&emsp;AQS实现了两种模式：公平模式和非公平模式,在我们实现自定义锁的时候(后续会自己实现锁)只需按照要求即可实现对应模式或两种模式都实现,ReentrantLock就是实现了上述两种模式的锁
-&emsp;&emsp;在使用公平模式时,AQS会生成一个FIFO队列,严格按照线程挂起顺序获得锁使用权.或者说AQS提供了FIFO队列
-&emsp;&emsp;AQS内部包含了两个内部类,可以先从这个简单的内部类开始解析
+&emsp;&emsp;AbstractQueuedSynchronizer(下文均以AQS代替)可以用于构建锁或者其他相关同步装置的基础框架.JDK1.5之前一般使用synchronized关键字来实现线程对共享变量的互斥访问,而JDK1.5之后开发了AQS组件,使用原生java代码实现了synchronized语义.  
+&emsp;&emsp;AQS实现了两种模式：公平模式和非公平模式,在我们实现自定义锁的时候(后续会自己实现锁)只需按照要求即可实现对应模式或两种模式都实现,ReentrantLock就是实现了上述两种模式的锁  
+&emsp;&emsp;在使用公平模式时,AQS会生成一个FIFO队列,严格按照线程挂起顺序获得锁使用权.或者说AQS提供了FIFO队列  
+&emsp;&emsp;AQS内部包含了两个内部类,可以先从这个简单的内部类开始解析  
 ## Node类解析
-&emsp;&emsp;Node是用来构成FIFO队列的基本单元,当前线程获取同步状态失败后,AQS会将当前线程以及等待状态等信息构造成节点并加入到同步队列中,同时会阻塞当前线程,当同步状态释放后,会把首节点的线程唤醒,使其再次尝试获取同步状态
-&emsp;&emsp;它是用来保存获取同步状态失败的线程引用和线程状态、等待状态以及前驱和后继节点的容器,用来实现线程阻塞.
-具体代码解析如下:
+&emsp;&emsp;Node是用来构成FIFO队列的基本单元,当前线程获取同步状态失败后,AQS会将当前线程以及等待状态等信息构造成节点并加入到同步队列中,同时会阻塞当前线程,当同步状态释放后,会把首节点的线程唤醒,使其再次尝试获取同步状态  
+&emsp;&emsp;它是用来保存获取同步状态失败的线程引用和线程状态、等待状态以及前驱和后继节点的容器,用来实现线程阻塞.  
+具体代码解析如下:  
 ```
 static final class Node {
 	/** static类的属性 */
@@ -119,9 +119,8 @@ static final class Node {
 }
 ```
 ## ConditionObject类解析
-&emsp;&emsp;已在Condiiton源码解析中阐述,如有需要请看
-ConditionObject类解析连接
-&emsp;&emsp;AQS的内部类Node和ConditionObject已经解析完毕,接下来解析AQS的成员变量,基础部分就解析完毕,就可以各种AQS相关的操作流程
+&emsp;&emsp;已在Condiiton源码解析中阐述,如有需要请看[ConditionObject类解析连接](https://ericql.github.io/2018/08/30/%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1Condition%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/)    
+&emsp;&emsp;AQS的内部类Node和ConditionObject已经解析完毕,接下来解析AQS的成员变量,基础部分就解析完毕,就可以各种AQS相关的操作流程  
 ## AQS成员变量
 ### 共享资源与同步队列
 ```
@@ -143,8 +142,8 @@ private transient volatile Node tail;
  */
 private volatile int state;
 ```
-&emsp;&emsp;由上概述的成员变量可知:AQS维护了volatile int state(代表共享资源,同步器的状态值,如:1-已占有,0-未占有,>1-表示重入的数量)和一个FIFO线程等待队列;AQS使用了state状态位+FIFO排列方式记录了锁的获取和释放
-共享资源+等待队列图
+&emsp;&emsp;由上概述的成员变量可知:AQS维护了volatile int state(代表共享资源,同步器的状态值,如:1-已占有,0-未占有,>1-表示重入的数量)和一个FIFO线程等待队列;AQS使用了state状态位+FIFO排列方式记录了锁的获取和释放  
+![共享资源+等待队列图](/img/in-post/AQS/AQS共享资源与队列.jpg)
 state的访问方式主要是以下三种:
 ```
 /**
@@ -186,7 +185,7 @@ private static final long nextOffset;
 ```
 内部类和成员变量等基础解析完毕,接下来就是AQS操作:
 ## AQS操作解析
-AQS类结构图
+![AQS类结构图](/img/in-post/AQS/AQS类结构图.jpg)  
 &emsp;&emsp;由上图可知:AQS实现了两种资源共享方式:独占模式+共享模式,独占对外提供的方法是acquire-release;共享对外提供方法是acquireShared-releaseShared;接下来分别就这两种方式进行阐述
 ### AQS独占方式解析
 #### acquire获取资源
@@ -204,18 +203,18 @@ public final void acquire(int arg) {
 		selfInterrupt();
 }
 ```
-acquire流程图
+![acquire流程图](/img/in-post/AQS/Acquire流程.jpg)
 ##### tryAcquire方法
-&emsp;&emsp;此方法尝试获取资源,AQS中代码如下:
+&emsp;&emsp;此方法尝试获取资源,AQS中代码如下:  
 ```
 protected boolean tryAcquire(int arg) {
 	throw new UnsupportedOperationException();
 }
 ```
-&emsp;&emsp;AQS中的tryAcquire方法直接抛出异常,并没有实现具体的功能,具体的功能交给具体自定义同步器去实现了.
-&emsp;&emsp;注意:此处并没有定义成abstract,因为AQS内部实现了独占模式和共享模式,不定义成abstract,自定义同步器可根据自己需求单独实现其中一种或两种都实现
-如JDK内部的ReentrantLock已经使用FairSync和NonFairSync这两种方式帮我们实现了tryAcquire
-FairSync的tryAcquire:
+&emsp;&emsp;AQS中的tryAcquire方法直接抛出异常,并没有实现具体的功能,具体的功能交给具体自定义同步器去实现了.  
+&emsp;&emsp;注意:此处并没有定义成abstract,因为AQS内部实现了独占模式和共享模式,不定义成abstract,自定义同步器可根据自己需求单独实现其中一种或两种都实现  
+如JDK内部的ReentrantLock已经使用FairSync和NonFairSync这两种方式帮我们实现了tryAcquire  
+FairSync的tryAcquire:  
 ```
 protected final boolean tryAcquire(int acquires) {
 	// 获取当前线程
@@ -265,8 +264,8 @@ final boolean nonfairTryAcquire(int acquires) {
 }
 ```
 ##### addWaiter()
-&emsp;&emsp;当tryAcquire尝试去获取锁的时候成功则返回true,失败则返回false;此时!tryAcquire就是true就会往下执行acquireQueued(addWaiter())
-&emsp;&emsp;addWaiter(Node.EXCLUSIVE)的作用:创建"当前线程"的Node节点,且Node中记录"当前线程"对应的锁是"独占锁"类型,并且该节点添加到CLH队列的末尾
+&emsp;&emsp;当tryAcquire尝试去获取锁的时候成功则返回true,失败则返回false;此时!tryAcquire就是true就会往下执行acquireQueued(addWaiter())  
+&emsp;&emsp;addWaiter(Node.EXCLUSIVE)的作用:创建"当前线程"的Node节点,且Node中记录"当前线程"对应的锁是"独占锁"类型,并且该节点添加到CLH队列的末尾  
 ```
 private Node addWaiter(Node mode) {  
     // 新建一个Node节点,节点对应的线程是"当前线程","当前线程"的锁的模型是mode
@@ -385,21 +384,21 @@ private final boolean parkAndCheckInterrupt() {
 	return Thread.interrupted();
 }
 ```
-parkAndCheckInterrupt()的作用是阻塞当前线程,并且返回"线程被唤醒之后"的中断状态.它会先通过LockSupport.park()阻塞"当前线程",然后通过Thread.interrupted()返回线程的中断状态
+parkAndCheckInterrupt()的作用是阻塞当前线程,并且返回"线程被唤醒之后"的中断状态.它会先通过LockSupport.park()阻塞"当前线程",然后通过Thread.interrupted()返回线程的中断状态  
 
-线程被阻塞之后如何唤醒:
-第1种情况：unpark()唤醒.”前继节点对应的线程”使用完锁之后,通过unpark()方式唤醒当前线程
+线程被阻塞之后如何唤醒:  
+第1种情况：unpark()唤醒.”前继节点对应的线程”使用完锁之后,通过unpark()方式唤醒当前线程  
 第2种情况：中断唤醒.其它线程通过interrupt()中断当前线程
 
-补充: LockSupport()中的park(),unpark()的作用 和 Object中的wait(),notify()作用类似,是阻塞/唤醒;它们的用法不同,park(),unpark()是轻量级的,而wait(),notify()是必须先通过Synchronized获取同步锁
+补充: LockSupport()中的park(),unpark()的作用 和 Object中的wait(),notify()作用类似,是阻塞/唤醒;它们的用法不同,park(),unpark()是轻量级的,而wait(),notify()是必须先通过Synchronized获取同步锁  
 3.acquireQueue的流程图
-具体流程图
+![acquireQueue的流程图](/img/in-post/AQS/AcquireQueue.jpg)
 ##### acquire流程总结
-1.调用tryAcquire()尝试去获取资源,成功则返回
-2.失败则addWaiter将线程对应节点放到队列尾部,并标记为独占模式,
-3.acquireQueued是不是第一个在等待的,是就再尝试获取,不行就去休息
-4.等待过程如果被中断,它不响应,等待获取资源即当前线程在活跃后再去处理
-acquire流程图
+1.调用tryAcquire()尝试去获取资源,成功则返回  
+2.失败则addWaiter将线程对应节点放到队列尾部,并标记为独占模式,  
+3.acquireQueued是不是第一个在等待的,是就再尝试获取,不行就去休息  
+4.等待过程如果被中断,它不响应,等待获取资源即当前线程在活跃后再去处理  
+![acquire的流程图](/img/in-post/AQS/Acquire.jpg)
 #### release释放资源
 &emsp;&emsp;独占模式下资源的释放,也是Lock锁的unlock的具体实现
 ```
@@ -489,10 +488,10 @@ protected int tryAcquireShared(int arg) {
 }
 ```
 &emsp;&emsp;又看到直接抛出异常的方法,大家应该知道此方法肯定是由实现类去具体实现了,这里后续每一个实现类都会进行源码分析,咱后续再讨论;
-该方法已经明确了返回值: 
-- 失败则返回负值
-- 在共享模式下获取成功,但是没有后续资源可以获取则返回0
-- 在共享模式下获取成功,并且后续获取资源也成功则返回正值,这种情况下,后续等待线程必须检查可用性
+该方法已经明确了返回值:   
+- 失败则返回负值  
+- 在共享模式下获取成功,但是没有后续资源可以获取则返回0  
+- 在共享模式下获取成功,并且后续获取资源也成功则返回正值,这种情况下,后续等待线程必须检查可用性  
 ##### 2.doAcquireShared
 ```
 /**
@@ -536,7 +535,7 @@ private void doAcquireShared(int arg) {
 	}
 }
 ```
-&emsp;&emsp;与acquireQueued()唯一区别是中断处理操作selfIntertupt()放到doAcquireShared()里面,而前面的独占模式acquireQueued则是放在外面最后处理;即acquireQueued是先拿到资源后判断中断,而共享模式是在拿资源的过程中可以中断以便以后线程可以获取资源,关键就在于拿资源过程中是否可以被抢占
+&emsp;&emsp;与acquireQueued()唯一区别是中断处理操作selfIntertupt()放到doAcquireShared()里面,而前面的独占模式acquireQueued则是放在外面最后处理;即acquireQueued是先拿到资源后判断中断,而共享模式是在拿资源的过程中可以中断以便以后线程可以获取资源,关键就在于拿资源过程中是否可以被抢占  
 &emsp;&emsp;与独占模式相比,共享模式下必须是head节点后面的第一个等待节点去获取,共享资源有剩余的情况下就会去唤醒其他线程节点;而独占模式下,同一时刻只有一个线程在执行
 ```
 /**
@@ -572,7 +571,7 @@ public final boolean releaseShared(int arg) {
 	return false;
 }
 ```
-&emsp;&emsp;即先释放掉资源后唤醒后继,与独占模式下release一致,但是独占模式下tryRelease在完全释放掉资源后才会去唤醒其他节点,主要是独占下可重入的问题,而共享模式下则是控制一定量线程并发执行,拥有这些资源的线程释放部分资源就可以唤醒后继节点
+&emsp;&emsp;即先释放掉资源后唤醒后继,与独占模式下release一致,但是独占模式下tryRelease在完全释放掉资源后才会去唤醒其他节点,主要是独占下可重入的问题,而共享模式下则是控制一定量线程并发执行,拥有这些资源的线程释放部分资源就可以唤醒后继节点  
 &emsp;&emsp;tryReleaseShared同样是抛出异常方式,需要实现类去实现的
 ##### 1.doReleaseShared
 ```
