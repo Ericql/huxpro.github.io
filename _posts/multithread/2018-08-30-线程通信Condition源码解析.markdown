@@ -507,4 +507,20 @@ private final boolean parkAndCheckInterrupt() {
 }
 ```
 ### signal方法解析
+&emsp;&emsp;唤醒condition队列中的第一个condition状态的节点(中间会检测Cancelled状态的节点并全部移除队列),将节点添加到CLH队列的末尾;设置该节点在CLH节点中前驱节点的状态为singal(若前驱节点的状态为Cancelled或前驱节点执行CAS操作失败都会执行unpark操作唤醒该线程)  
+```java  
+/**
+ * 唤醒condition队列中首部第一个condition状态的节点
+ */
+public final void signal() {
+    // 判断锁是否被当前线程独占,如果不是,则当前线程不能singal其他线程
+    if (!isHeldExclusively())
+        throw new IllegalMonitorStateException();
+    // 将等待队列的第一个节点出队列,并将其加入同步队列
+    Node first = firstWaiter;
+    if (first != null)
+      // 真正的释放信号
+      doSignal(first);
+}
+```
 #### 出队操作
