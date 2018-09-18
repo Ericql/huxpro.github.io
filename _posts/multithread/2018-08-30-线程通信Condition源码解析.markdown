@@ -524,3 +524,97 @@ public final void signal() {
 }
 ```
 #### 出队操作
+&emsp;&emsp;出队操作主要是将条件等待队列中的节点(null或未取消的选择节点)移除,并放入到AQS的同步等待队列中;其代码如下:  
+```java
+/**
+ * 当命中一个未取消或为null的节点,将它移除并传输出去
+ * @param first 条件等待队列上第一个非空节点
+ */
+private void doSignal(Node first) {
+    do {
+        if ( (firstWaiter = first.nextWaiter) == null)
+            lastWaiter = null;
+        // first的nextwaiter设置为null  
+        first.nextWaiter = null;
+    // transferForSignal将等待队列节点传输到AQS的同步等待队列上
+    // 如果转换队列不成功且等待队列不为null,则继续对下一个节点操作
+    } while (!transferForSignal(first) &&
+             (first = firstWaiter) != null);
+}
+
+/**
+ * 它是AQS的方法,不是ConditionObject的方法
+ * 将节点从条件队列传输到同步队列
+ */
+final boolean transferForSignal(Node node) {
+    /*
+     * condition队列和sync队列区别就在于waitStatus值
+     * CAS操作修改node的waitStatus
+     *  - 如果失败表示线程已经放弃等待(超时或被中断),直接返回false
+     *  - 如果成功调用enq方法将它放入sync等待队列
+     */
+    if (!compareAndSetWaitStatus(node, Node.CONDITION, 0))
+        return false;
+
+    /*
+     * 将节点放入队列,并尝试设置waitStatus以指示线程正在等待
+     * 如果设置waitStatus失败,则唤醒重新同步
+     */
+    Node p = enq(node);
+    // 检测前驱节点的waitStatus
+    int ws = p.waitStatus;
+    // 如果waitStatus为Cancelled,直接unpark
+    // 前驱节点的waitStatus设置为SIGNAL,设置不了的直接unpark(unpark的是node持有的线程,不是当前线程)
+    if (ws > 0 || !compareAndSetWaitStatus(p, ws, Node.SIGNAL))
+        LockSupport.unpark(node.thread);
+    return true;
+}
+
+/**
+ * 将节点插入队列, 必要时进行初始化
+ * 返回node节点的前驱节点
+ */
+private Node enq(final Node node) {
+    for (;;) {
+        Node t = tail;
+        if (t == null) { // Must initialize
+            if (compareAndSetHead(new Node()))
+                tail = head;
+        } else {
+            node.prev = t;
+            if (compareAndSetTail(t, node)) {
+                t.next = node;
+                return t;
+            }
+        }
+    }
+}
+```
+出队操作图示:  
+![出队操作](/img/in-post/condition/出等待队列操作.jpg)
+### signAll解析
+&emsp;&emsp;将condition队列中所有node出队,逐个添加到CLH队列末尾,同时修改它们在CLH队列中前驱节点的状态为signal,这样不用在此处就唤醒该节点的线程,唤醒工程交给前驱节点去做  
+```java
+public final void signalAll() {
+    // 查看当前线程是否独占锁,若不是则当前线程没有权限执行signalAll操作,抛出异常
+    if (!isHeldExclusively())
+        throw new IllegalMonitorStateException();
+    Node first = firstWaiter;
+    if (first != null)
+        doSignalAll(first);
+}
+
+/**
+ * 移除并传输所有节点
+ * @param first 条件队列第一个非空节点
+ */
+private void doSignalAll(Node first) {
+    lastWaiter = firstWaiter = null;
+    do {
+        Node next = first.nextWaiter;
+        first.nextWaiter = null;
+        transferForSignal(first);
+        first = next;
+    } while (first != null);
+}
+```
