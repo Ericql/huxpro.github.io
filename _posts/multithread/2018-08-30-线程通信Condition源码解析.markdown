@@ -110,7 +110,7 @@ public class Consumer implements Runnable {
     }
 }
 ```
-&emsp;&emsp;wait和notify必须放在同步代码块中执行,否则报错;wait和notify必须是持有锁对象的
+&emsp;&emsp;wait和notify必须放在同步代码块中执行,否则报错;wait和notify必须是持有锁对象的  
 &emsp;&emsp;Object的监视器方法需要结合synchronized关键字一起使用可以实现等待/通知模式;如果使用了显示锁lock,上述的线程通信方式就不能用了,所以显示锁要提供自己的等待/通知模式,这就是Condition
 ## 显式锁提供的线程通信--Condition使用
 &emsp;&emsp;使用Condition方式的线程通信模拟生产消费者模型,具体代码如下:
@@ -213,18 +213,18 @@ public class Producter implements Runnable {
 ```
 notify是随机唤醒一个线程,但是Condition则可以指定线程唤醒;
 ## Condition简介
-&emsp;&emsp;Condition主要是为了在JUC框架中提供和Java线程通信的wait、notify、notifyAll方法类似的功能;即通过设置一个条件,在合适的时候通过调用await使一个线程沉睡并释放锁,当其他线程调用singal方法时会唤醒那个线程.condition通常视为多线程之间通信的工具
-&emsp;&emsp;Condition自己也维护了一个队列,该队列的作用是维护一个等待signal信号的队列,两个队列的作用是不同,每个线程也仅仅会同时存在以上两个队列中的一个
-示例过程:
-线程1:
-- 线程1调用reentrantLock.lock时,持有锁
-- 线程1调用await方法,进入"条件等待队列",同时释放锁
-- 线程1获取到线程2 Signal信号,从"条件等待队列"进入到"同步等待队列"
-线程2:
-- 线程2调用reentrantLock.lock时,由于锁被线程1持有,进入"同步等待队列"
-- 由于线程1释放锁,线程2从"同步等待队列"移除,获取到锁.线程2调用signal方法,导致线程1被唤醒
-- 线程2调用reentrantLock.unlock,线程1获取锁,继续循环
-&emsp;&emsp;条件等待队列是Condition内部自己维护的一个队列,具有以下特点
+&emsp;&emsp;Condition主要是为了在JUC框架中提供和Java线程通信的wait、notify、notifyAll方法类似的功能;即通过设置一个条件,在合适的时候通过调用await使一个线程沉睡并释放锁,当其他线程调用singal方法时会唤醒那个线程.condition通常视为多线程之间通信的工具  
+&emsp;&emsp;Condition自己也维护了一个队列,该队列的作用是维护一个等待signal信号的队列,两个队列的作用是不同,每个线程也仅仅会同时存在以上两个队列中的一个  
+示例过程:  
+线程1:  
+&emsp;&emsp;- 线程1调用reentrantLock.lock时,持有锁  
+&emsp;&emsp;- 线程1调用await方法,进入"条件等待队列",同时释放锁  
+&emsp;&emsp;- 线程1获取到线程2 Signal信号,从"条件等待队列"进入到"同步等待队列"    
+线程2:  
+&emsp;&emsp;- 线程2调用reentrantLock.lock时,由于锁被线程1持有,进入"同步等待队列"  
+&emsp;&emsp;- 由于线程1释放锁,线程2从"同步等待队列"移除,获取到锁.线程2调用signal方法,导致线程1被唤醒  
+&emsp;&emsp;- 线程2调用reentrantLock.unlock,线程1获取锁,继续循环   
+条件等待队列是Condition内部自己维护的一个队列,具有以下特点  
 * 要加入"条件等待队列"的节点,不能在"同步等待队列"
 * 从"条件等待队列"移除的节点,会进入"同步等待队列"
 * 一个锁对象只能有一个"同步等待队列",但可以有多个"条件等待队列"
