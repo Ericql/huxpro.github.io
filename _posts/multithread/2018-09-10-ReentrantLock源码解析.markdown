@@ -233,8 +233,10 @@ final void lock() {
 		acquire(1);
 }
 ```
-&emsp;&emsp;由上可知:公平锁与非公平锁在lock的时候的区别是:compareAndSetState可以将资源状态由0设置为1,即将资源占有线程设置为当前线程,而公平锁不会这样,它会acquire从CLH队列中获取第一个
-&emsp;&emsp;acquire方法则是AQS类中的方法,已经在上一篇AQS中解析了,具体可以看上一篇
+&emsp;&emsp;由上可知:公平锁与非公平锁在lock的时候的区别是:compareAndSetState可以将资源状态由0设置为1,即将资源占有线程设置为当前线程,而公平锁不会这样,它会acquire从CLH队列中获取第一个  
+&emsp;&emsp;acquire方法则是AQS类中的方法,已经在上一篇AQS中解析了,具体可以看上一篇  
+lock流程图如下:  
+![lock流程图](/img/in-post/JUC/ReentrantLock/lock流程图.jpg)
 ## unlock
 ```
 public void unlock() {
@@ -275,6 +277,8 @@ protected final boolean tryRelease(int releases) {
     return free;
 }
 ```
+unlock流程图如下:  
+![unlock流程图](/img/in-post/JUC/ReentrantLock/unlock流程图.jpg)
 ## 示例分析
 ```
 public class MyThread extends Thread {
