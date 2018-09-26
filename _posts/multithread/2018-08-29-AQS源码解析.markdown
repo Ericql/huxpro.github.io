@@ -143,7 +143,7 @@ private transient volatile Node tail;
 private volatile int state;
 ```
 &emsp;&emsp;由上概述的成员变量可知:AQS维护了volatile int state(代表共享资源,同步器的状态值,如:1-已占有,0-未占有,>1-表示重入的数量)和一个FIFO线程等待队列;AQS使用了state状态位+FIFO排列方式记录了锁的获取和释放  
-![共享资源+等待队列图](/img/in-post/AQS/AQS共享资源与队列.jpg)
+![共享资源+等待队列图](/img/in-post/JUC/AQS/AQS共享资源与队列.jpg)
 state的访问方式主要是以下三种:
 ```
 /**
@@ -185,7 +185,7 @@ private static final long nextOffset;
 ```
 内部类和成员变量等基础解析完毕,接下来就是AQS操作:
 ## AQS操作解析
-![AQS类结构图](/img/in-post/AQS/AQS类结构图.jpg)  
+![AQS类结构图](/img/in-post/JUC/AQS/AQS类结构图.jpg)  
 &emsp;&emsp;由上图可知:AQS实现了两种资源共享方式:独占模式+共享模式,独占对外提供的方法是acquire-release;共享对外提供方法是acquireShared-releaseShared;接下来分别就这两种方式进行阐述
 ### AQS独占方式解析
 #### acquire获取资源
@@ -203,7 +203,7 @@ public final void acquire(int arg) {
 		selfInterrupt();
 }
 ```
-![acquire流程图](/img/in-post/AQS/Acquire流程.jpg)
+![acquire流程图](/img/in-post/JUC/AQS/Acquire流程.jpg)
 ##### tryAcquire方法
 &emsp;&emsp;此方法尝试获取资源,AQS中代码如下:  
 ```
@@ -392,13 +392,13 @@ parkAndCheckInterrupt()的作用是阻塞当前线程,并且返回"线程被唤�
 
 补充: LockSupport()中的park(),unpark()的作用 和 Object中的wait(),notify()作用类似,是阻塞/唤醒;它们的用法不同,park(),unpark()是轻量级的,而wait(),notify()是必须先通过Synchronized获取同步锁  
 3.acquireQueue的流程图  
-![acquireQueue的流程图](/img/in-post/AQS/AcquireQueue.jpg)
+![acquireQueue的流程图](/img/in-post/JUC/AQS/AcquireQueue.jpg)
 ##### acquire流程总结
 1.调用tryAcquire()尝试去获取资源,成功则返回  
 2.失败则addWaiter将线程对应节点放到队列尾部,并标记为独占模式,  
 3.acquireQueued是不是第一个在等待的,是就再尝试获取,不行就去休息  
 4.等待过程如果被中断,它不响应,等待获取资源即当前线程在活跃后再去处理  
-![acquire的流程图](/img/in-post/AQS/Acquire.jpg)
+![acquire的流程图](/img/in-post/JUC/AQS/Acquire.jpg)
 #### release释放资源
 &emsp;&emsp;独占模式下资源的释放,也是Lock锁的unlock的具体实现
 ```

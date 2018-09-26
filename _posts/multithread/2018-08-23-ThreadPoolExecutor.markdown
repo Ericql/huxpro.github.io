@@ -25,7 +25,7 @@ tags:
     
 # 创建一个线程池并提交线程任务 #
 Java线程池最核心的类是ThreadPoolExecutor,查看ThreadPoolExecutor类关系继承图如下:
-![ThreadPoolExecutor类关系图](/img/in-post/thread-pool-executor/结构.png)
+![ThreadPoolExecutor类关系图](/img/in-post/JUC/thread-pool-executor/结构.png)
 
 
 查看Executor接口可以通过execute方法进行提交任务
@@ -33,11 +33,11 @@ Java线程池最核心的类是ThreadPoolExecutor,查看ThreadPoolExecutor类关
 所以ThreadPoolExecutor可以使用上述两种方式提交任务
 ## ThreadPoolExecutor源码解析 ##
 ### 类的结构 ###
-![ThreadPoolExecutor类结构图](/img/in-post/thread-pool-executor/ThreadPoolExecutor类结构图.png)
+![ThreadPoolExecutor类结构图](/img/in-post/JUC/thread-pool-executor/ThreadPoolExecutor类结构图.png)
 
 
 ThreadPoolExecutor的核心内部类为Worker,其对资源进行了复用,减少了创建线程的开销,而其他的AbortPolicy等则是RejectedExecutionHandler接口的各种拒绝策略类
-![ThreadPoolExecutor类结构图1](/img/in-post/thread-pool-executor/ThreadPoolExecutor类结构图1.png)
+![ThreadPoolExecutor类结构图1](/img/in-post/JUC/thread-pool-executor/ThreadPoolExecutor类结构图1.png)
 当使用线程池并且使用有界队列的时候,如果队列满了,任务添加到线程池就会有问题,针对这个问题Java线程池提供了以下拒绝策略:
 
  1. AbortPolicy:使用该策略时,如果线程池队列满了,丢掉这个任务并且抛出RejectedExecutionException异常
