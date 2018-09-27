@@ -14,11 +14,11 @@ tags:
 ---
 # 并发工具类CountDownLatch源码解析
 ## 简介
-&emsp;&emsp;CountDownLatch是一个同步工具类,用来协调多个线程之间的同步,比如我有很多数据需要进行分类计算,再进行汇总.为了更快的解析,则每一种类型计算都用一个线程去处理,等到所有类型计算完毕再进行汇总,这时我们就可以CountDownLatch
+&emsp;&emsp;CountDownLatch是一个同步工具类,用来协调多个线程之间的同步,比如我有很多数据需要进行分类计算,再进行汇总.为了更快的解析,则每一种类型计算都用一个线程去处理,等到所有类型计算完毕再进行汇总,这时我们就可以CountDownLatch  
 &emsp;&emsp;CountDownLatch能够使一个线程在等待另外一些线程完成各自工作后再继续执行.其内部使用计数器实现,其初始值为线程的数量.当每一个线程完成后计数器值就会减一,当计数器值为0时,表示所有的线程都已经完成任务了,则CountDownLatch上等待线程就可以继续运行了
 ## 使用场景
-1.**开始执行前等待n个线程完成各自任务**：主线程在开始运行前等待n个线程执行完毕.将CountDownLatch的计数器初始化为n(new CountDownLatch(n)),每当一个任务线程执行完毕,就将计数器减1(cdl.countDown()),当计数器值变为0时,在CountDownLatch上await()的线程就会被唤醒.典型的就是启动应用程序之前,程序的必备组件/监听等都已经准备就绪了.
-2.**实现多个线程开始执行任务的最大并行性**：初始化一个共享的CountDownLatch(1),将其计数器初始化为1.多个线程在开始运行前首先cdl.await(),当主线程调用countDown时,计数器变为0,多个线程就同时被唤醒.
+1.**开始执行前等待n个线程完成各自任务**：主线程在开始运行前等待n个线程执行完毕.将CountDownLatch的计数器初始化为n(new CountDownLatch(n)),每当一个任务线程执行完毕,就将计数器减1(cdl.countDown()),当计数器值变为0时,在CountDownLatch上await()的线程就会被唤醒.典型的就是启动应用程序之前,程序的必备组件/监听等都已经准备就绪了.  
+2.**实现多个线程开始执行任务的最大并行性**：初始化一个共享的CountDownLatch(1),将其计数器初始化为1.多个线程在开始运行前首先cdl.await(),当主线程调用countDown时,计数器变为0,多个线程就同时被唤醒.  
 3.**检测死锁**：使用n个线程访问共享资源,在每次测试阶段线程数量不同,查看什么情况会产生死锁
 ## 源码解析
 ### 内部类
@@ -148,8 +148,8 @@ private void setHeadAndPropagate(Node node, int propagate) {
 	}
 }
 ```
-await流程图如下:
-
+await流程图如下:  
+![await流程图](/img/in-post/JUC/CountDownLatch/await流程图.jpg)
 ### countDown
 ```
 public void countDown() {
@@ -206,7 +206,8 @@ private void doReleaseShared() {
 	}
 }
 ```
-countDown流程图如下:
+countDown流程图如下:  
+![countDown流程图](/img/in-post/JUC/CountDownLatch/countDown流程图.jpg)
 ### getCount
 ```
 /**
