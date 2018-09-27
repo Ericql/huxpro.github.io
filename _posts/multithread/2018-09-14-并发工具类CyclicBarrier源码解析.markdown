@@ -1,6 +1,6 @@
 # 并发工具类CyclicBarrier源码解析
 ## 简介
-&emsp;&emsp;CyclicBarrier也是一个同步工具类,字面上意思为可循环的屏障,查看JDK的描述:它允许一组线程相互等待直到所有线程都到达一个公共的屏障点;而这个屏障是可循环的,即在所有的线程释放后这个屏障是可以重新使用的
+&emsp;&emsp;CyclicBarrier也是一个同步工具类,字面上意思为可循环的屏障,查看JDK的描述:它允许一组线程相互等待直到所有线程都到达一个公共的屏障点;而这个屏障是可循环的,即在所有的线程释放后这个屏障是可以重新使用的  
 &emsp;&emsp;与CountDownLatch非常相似;不同点在于CountDownLatch维护了一个锁存器计数,当计数达到0后处于wait状态的线程可以执行,而对于CyclicBarrier相当于一个屏障(类似于开会,当所有人都赶到会议室后就开始开会,先来的什么也不干wait),允许一组线程相互等待直到达到某个公共屏障点
 ## 源码解析
 ### 内部类
@@ -232,18 +232,18 @@ public class CyclicBarrierDemo {
     }
 }
 ```
-&emsp;&emsp;运行结果可知:当Thread0、1、2全部到达会议室后(即调用await)后就会执行CyclicBarrier的barrierAction;之后会继续执行方法,之后执行各线程自己的方法
-1.当Thread0执行await的流程图如下:
-
+&emsp;&emsp;运行结果可知:当Thread0、1、2全部到达会议室后(即调用await)后就会执行CyclicBarrier的barrierAction;之后会继续执行方法,之后执行各线程自己的方法  
+1.当Thread0执行await的流程图如下:  
+![t0await流程图](/img/in-post/JUC/CyclicBarrier/Thread0的await.jpg)
 > 说明:ReentrantLock默认使用非公平策略,在dowait调用了NonfairSync.lock;因为一开始的AQS状态为0,所以Thread0可以设置为占用线程,trip.await调用使得线程被添加到条件等待队列上,并被park释放掉资源
 
-2.Thread1执行await的流程图如下:
-
+2.Thread1执行await的流程图如下:  
+![t1await流程图](/img/in-post/JUC/CyclicBarrier/Thread1的await.jpg)
 > Thread1也被添加到条件等待队列的尾部,并且被park;
 
-3.Thread2执行await的流程图如下:
-
+3.Thread2执行await的流程图如下:  
+![t2await流程图](/img/in-post/JUC/CyclicBarrier/Thread2的await.jpg)
 > 当Thread2进来后人员到齐,此时count为0,就会执行barrier中的操作;同时也会把条件等待队列的节点全部signalAll到同步队列中;Thread0线程也会被unpark(),获取到CPU资源继续运行
 
-Thread0获取到资源后,在AQS的conditionObject方法中就会跳出while循环,执行下放的acquireQueued方法,具体流程图如下:
-
+Thread0获取到资源后,在AQS的conditionObject方法中就会跳出while循环,执行下放的acquireQueued方法,具体流程图如下:  
+![unpark流程图](/img/in-post/JUC/CyclicBarrier/unpark后的操作.jpg)
