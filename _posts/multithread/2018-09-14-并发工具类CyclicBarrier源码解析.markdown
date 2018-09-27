@@ -1,3 +1,17 @@
+---
+layout:       post
+title:        "并发工具类CyclicBarrier源码解析"
+subtitle:     "并发工具类CyclicBarrier源码解析"
+date:         2018-09-14 12:00:00
+author:       "Eric"
+header-img:   ""
+header-mask:  0.3
+catalog:      true
+multilingual: false
+tags:
+    - Java
+    - 多线程
+---
 # 并发工具类CyclicBarrier源码解析
 ## 简介
 &emsp;&emsp;CyclicBarrier也是一个同步工具类,字面上意思为可循环的屏障,查看JDK的描述:它允许一组线程相互等待直到所有线程都到达一个公共的屏障点;而这个屏障是可循环的,即在所有的线程释放后这个屏障是可以重新使用的  

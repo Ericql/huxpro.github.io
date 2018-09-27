@@ -1,3 +1,17 @@
+---
+layout:       post
+title:        "并发工具类Semaphore信号量源码解析"
+subtitle:     "并发工具类Semaphore信号量源码解析"
+date:         2018-09-18 12:00:00
+author:       "Eric"
+header-img:   ""
+header-mask:  0.3
+catalog:      true
+multilingual: false
+tags:
+    - Java
+    - 多线程
+---
 # 并发工具类Semaphore信号量源码解析
 ## 简介
 &emsp;&emsp;Semaphore是信号量,在Java并发编程中,信号量控制的是线程并发的数量.它允许n个任务同时访问某个资源,主要是通过信号量大小控制并发数量
