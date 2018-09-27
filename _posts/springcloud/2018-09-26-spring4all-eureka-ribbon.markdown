@@ -12,7 +12,7 @@ tags:
     - Java
     - SpringCloud
 ---
-#Service Discovery and Client-Side Load Balancing With Eureka and Ribbon
+# Service Discovery and Client-Side Load Balancing With Eureka and Ribbon
 
 原文链接：[https://dzone.com/articles/service-discovery-and-load-balancing-using-eureka](https://dzone.com/articles/service-discovery-and-load-balancing-using-eureka "Eureka实现服务发现和Ribbon的负载均衡")
 
@@ -22,7 +22,7 @@ tags:
 
 _想学习如何使用服务发现和客户端负载均衡来创建一个应用程序？查看此帖子以了解有关使用Eureka和Ribbon的更多信息_
 
-![eureka](../../img/in-post/SpringCloud/spring4all/eureka.png)
+![eureka](/img/in-post/SpringCloud/spring4all/eureka.png)
 
 今天我们将构建一个具有负载均衡和服务发现的程序。传统意义上，一个负载均衡器是一个运行的独立应用程序，带有所有服务节点，同样。我们将构建一个应用程序，客户端不需要记住服务器的IP，而且我们可以动态添加和删除节点。
 
