@@ -1,6 +1,6 @@
 ---
 layout:       post
-title:        "SpringCloud(-): 总述SpringCloud"
+title:        "SpringCloud第一篇: 总述SpringCloud"
 subtitle:     "SpringCloud概述"
 date:         2018-10-03 12:00:00
 author:       "Eric"
@@ -12,7 +12,7 @@ tags:
     - Java
     - SpringCloud
 ---
-# SpringCloud(-): 总述SpringCloud
+# SpringCloud第一篇: 总述SpringCloud
 ## 微服务概述
 &emsp;&emsp;微服务架构风格这种开发方法,是以开发一组小型服务的方式来开发一个独立的应用系统的.其中每个小型服务都运行在自己的进程中,并经常采用HTTP资源API这样轻量的机制来相互通信.这些服务围绕业务功能进行构建,并能通过全自动部署机制来进行独立部署.这些微服务可以使用不同的语言来编写,并且可以使用不同的数据存储技术.对这些微服务我们仅做最低限度的集中管理.
 ## SpringCloud概述
