@@ -1,6 +1,6 @@
 ---
 layout:       post
-title:        "SpringCloud概述"
+title:        "SpringCloud(-): 总述SpringCloud"
 subtitle:     "SpringCloud概述"
 date:         2018-10-03 12:00:00
 author:       "Eric"
