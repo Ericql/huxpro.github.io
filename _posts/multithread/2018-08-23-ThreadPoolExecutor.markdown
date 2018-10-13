@@ -11,7 +11,6 @@ multilingual: false
 tags:
     - Java
     - 多线程
-    - ThreadPoolExecutor
 ---
 
 # 线程池概述 #
