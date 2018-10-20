@@ -69,7 +69,7 @@ httpResponse.getWriter().close();
 SDK快速接入方式完成上述代码即可条码支付
 ### 利用官方Demo使用SpringBoot方式接入
 此处代码参考了https://blog.csdn.net/vbirdbest/article/details/80684460博客,在此声明  
-1.pom文件引入Alipay依赖  
+#### pom文件引入Alipay依赖  
 ```
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -116,7 +116,7 @@ SDK快速接入方式完成上述代码即可条码支付
     <artifactId>lombok</artifactId>
 </dependency>
 ```
-2.yml文件配置  
+#### yml文件配置  
 ```
 # 沙箱账号
 pay:
@@ -135,7 +135,7 @@ spring:
     mode: HTML5
     encoding: UTF-8
 ```
-3.配置类  
+#### 配置类  
 ```
 @Data
 @Slf4j
@@ -239,7 +239,7 @@ public class AlipayConfiguration {
     }
 }
 ```
-4.Controller代码  
+#### Controller代码  
 ```
 @Slf4j
 @Controller
@@ -402,7 +402,7 @@ public class AlipayWAPPayController {
     }
 }
 ```
-5.WebMvcConfiguration  
+#### WebMvcConfiguration  
 通过访问http://localhost:8080/toPay来跳转到toPay.html页面  
 ```
 @Configuration
@@ -414,7 +414,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     }
 }
 ```
-6.templates  
+#### templates  
 toPay.html  
 ```
 <!DOCTYPE html>
