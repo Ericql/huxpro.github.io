@@ -2,7 +2,7 @@
 layout:       post
 title:        "SpringBoot之支付宝支付 -- 当面付"
 subtitle:     "当面付"
-date:         2018-10-08 12:00:00
+date:         2018-10-13 12:00:00
 author:       "Eric"
 header-img:   ""
 header-mask:  0.3
@@ -38,20 +38,20 @@ tags:
 &emsp;&emsp;授权回调地址:是我们自己项目一个访问接口请求,当支付宝支付成功后会异步通知到这个地址上,通知此次支付结果是成功还是失败,例如：http://www.eric.com/pay/alipay/notify
 ## 当面付代码示例
 ### 搭建和配置开发环境
-1.下载服务端的SDK
-&emsp;&emsp;蚂蚁金服开放平台提供了[开放平台服务端SDK](https://docs.open.alipay.com/54/103419),内部封装了签名&验签、HTTP接口请求等基础功能,我们只需将SDK以maven方式引入我们自己的项目即可  
+1.下载服务端的SDK  
+&emsp;&emsp;蚂蚁金服开放平台提供了[开放平台服务端SDK](https://docs.open.alipay.com/54/103419),内部封装了签名&验签、HTTP接口请求等基础功能,我们只需将SDK以maven方式引入我们自己的项目即可    
 &emsp;&emsp;当然SDK对应的代码和示例demo,蚂蚁金服也均有提供,具体可参考[SDK&Demo](https://docs.open.alipay.com/194/105201/)  
 2.接口调用配置
 &emsp;&emsp;在SDK调用前需要进行初始化,初始化,初始化(重要的事情说三遍),以JAVA代码为例:
 ```
 AlipayClient alipayClient = new DefaultAlipayClient(URL, APP_ID, APP_PRIVATE_KEY, FORMAT, CHARSET, ALIPAY_PUBLIC_KEY, SIGN_TYPE);
 ```
-关键参数说明:
-| 配置参数 | 参数解释 | 获取方式/值 |
-|------ |----- | ----- |
-| URL | 支付宝网关(固定) |https://openapi.alipay.com/gateway.do
-|
-| APP_ID | APPID即创建应用后生成 | 获取见上面的创建应用并获取APPID|
+关键参数说明:  
+
+| 配置参数 | 参数解释 | 获取方式/值 |  
+|------ |----- | ----- |  
+| URL | 支付宝网关(固定) | https://openapi.alipay.com/gateway.do |
+| APP_ID | APPID即创建应用后生成 | 获取见上面的创建应用并获取APPID |
 | APP_PRIVATE_KEY | 开发者应用私钥 | 获取见上面配置密钥 |
 | FORMAT | 参数返回格式,只支持json | json(固定) |
 | CHARSET | 请求和签名使用的字符编码格式,支持GBK和UTF-8 | 根据实际情况配置 |
@@ -64,6 +64,7 @@ AlipayClient alipayClient = new DefaultAlipayClient(URL, APP_ID, APP_PRIVATE_KEY
 ![条码支付调用流程](/img/in-post/SpringBoot/Alipay/条码支付调用流程.jpg)  
 1.商户系统将用户付款码与订单信息一起通过交易支付接口[alipay.trade.pay](https://docs.open.alipay.com/api_1/alipay.trade.pay)请求到支付宝,并从接口同步返回中获取支付结果  
 2.根据公共返回参数中的code,这笔交易可能有四种状态:支付成功(10000),支付失败(40004),等待用户付款(10003)和未知异常(20000)
+
 | 结果码 | 说明 | 处理方式 |
 |------ |----- | ----- |
 | 10000 | 支付成功 |记录交易结果并在客户端显示支付成功，进入后续的业务处理 |
